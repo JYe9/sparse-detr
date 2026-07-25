@@ -1,0 +1,53 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Python packaging / build artifacts (models/ops CUDA extension, etc.)
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+MANIFEST
+
+# PyTorch checkpoints / model weights
+*.pth
+*.pt
+*.ckpt
+*.onnx
+checkpoints/
+
+# Experiment outputs
+exps/
+outputs/
+runs/
+
+# Datasets (data/ holds symlinks to external dataset dirs, e.g. data/coco)
+data/
+
+# Logs and profiling outputs
+*.log
+log_result.txt
+*profiling*.json
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environments
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
