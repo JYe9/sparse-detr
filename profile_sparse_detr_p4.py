@@ -96,7 +96,7 @@ def measure(model, x, warmups, samples, want_flops):
     out = {"batch": b, "input_shape": list(x.shape)}
     with torch.no_grad():
         calls = []
-        hook = lambda module, inputs, output: calls.append(inputs[0].shape[1] * module.n_levels * module.n_points * module.d_model * 10)
+        hook = lambda module, inputs, output: calls.append(inputs[0].shape[0] * inputs[0].shape[1] * module.n_levels * module.n_points * module.d_model * 10)  # batch x Len_q x L x K x D x 10
         handles = [m.register_forward_hook(hook) for m in model.modules() if isinstance(m, MSDeformAttn)]
         try:
             model(NestedTensor(x, mask))
@@ -107,7 +107,7 @@ def measure(model, x, warmups, samples, want_flops):
             raise
         for h in handles: h.remove()
         supp = float(sum(calls)) / 1e9
-        out["msdeformattn_calls"] = len(calls); out["msdeformattn_len_q"] = [int(c / (m.n_levels * m.n_points * m.d_model * 10)) for c, m in zip(calls, [m for m in model.modules() if isinstance(m, MSDeformAttn)])]
+        out["msdeformattn_calls"] = len(calls); out["msdeformattn_len_q"] = [int(c / (b * m.n_levels * m.n_points * m.d_model * 10)) for c, m in zip(calls, [m for m in model.modules() if isinstance(m, MSDeformAttn)])]
         if want_flops:
             fa = FlopCountAnalysis(_TraceWrapper(model), (x, mask)); fa.unsupported_ops_warnings(False); fa.uncalled_modules_warnings(False)
             supported = float(fa.total()) / 1e9; unsupported = {str(k): int(v) for k, v in fa.unsupported_ops().items()}
